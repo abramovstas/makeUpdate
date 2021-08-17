@@ -51,13 +51,17 @@ void Job::writeFilesToXml()
         writer.writeTextElement("path", "files");
         writer.writeStartElement("files");
         foreach (auto info, m_informationList)
-            writer.writeTextElement("file", QFileInfo(info.fileName).fileName());
+            if (QFileInfo(info.fileName).path() != m_directory)
+                writer.writeTextElement("filename", QFileInfo(info.fileName).path().remove(m_directory).remove(0,1) + "/" + QFileInfo(info.fileName).fileName());
+            else writer.writeTextElement("filename", QFileInfo(info.fileName).fileName());
         writer.writeEndElement();
         writer.writeStartElement("items");
         foreach (auto info, m_informationList)
         {
             writer.writeStartElement("item");
-            writer.writeTextElement("filename", QFileInfo(info.fileName).fileName());
+            if (QFileInfo(info.fileName).path() != m_directory)
+                writer.writeTextElement("filename", QFileInfo(info.fileName).path().remove(m_directory).remove(0,1) + "/" + QFileInfo(info.fileName).fileName());
+            else writer.writeTextElement("filename", QFileInfo(info.fileName).fileName());
             writer.writeTextElement("size", info.fileSize);
             writer.writeTextElement("md5", info.fileMd5);
             writer.writeEndElement();
